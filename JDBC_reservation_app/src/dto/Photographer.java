@@ -6,13 +6,15 @@ public class Photographer {
     private String name;
     private String phone;
     private int years;
+    private int reservationCount;
 
-    public Photographer(int photographerId, int studioId, String name, String phone, int years) {
+    public Photographer(int photographerId, int studioId, String name, String phone, int years, int reservationCount) {
         this.photographerId = photographerId;
         this.studioId = studioId;
         this.name = name;
         this.phone = phone;
         this.years = years;
+        this.reservationCount = reservationCount;
     }
 
     public int getPhotographerId() { return photographerId; }
@@ -30,5 +32,7 @@ public class Photographer {
     public int getYears() { return years; }
     public void setYears(int years) { this.years = years; }
 
+    public int getReservationCount() { return reservationCount; }
+    public void setReservationCount(int reservationCount) { this.reservationCount = reservationCount; }
 
 }

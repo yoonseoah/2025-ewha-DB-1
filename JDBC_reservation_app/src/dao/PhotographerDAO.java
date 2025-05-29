@@ -1,20 +1,63 @@
 package dao;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import dto.Photographer;
 import dto.PhotographerRank;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PhotographerDAO {
+	
+	private Connection conn;
+	
+	public PhotographerDAO(Connection conn) {
+		this.conn = conn;
+	}
+	
+	public List<Photographer> getPhotographersByStudio(int studioId) {
+		List<Photographer> photographers = new ArrayList<>();
+		
+		String sql = """
+				select 
+					p.photographer_id,
+					p.studio_id,
+					p.name,
+					p.phone,
+					p.years,
+					(select count(*)
+					 from Reservation r 
+					 where r.photographer_id = p.photographer_id) as reservation_count
+				from Photographer p
+				where p.studio_id = ?
+				order by p.years desc, reservation_count desc
+				""";
+		
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			pstmt.setInt(1, studioId);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				Photographer p = new Photographer(
+						rs.getInt("photographer_id"),
+						rs.getInt("studio_id"),
+						rs.getString("name"),
+						rs.getString("phone"),
+						rs.getInt("years"),
+						rs.getInt("reservation_count")
+						);
+						photographers.add(p);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return photographers;
+	}
 
-    private Connection connection;
-
-    public PhotographerDAO(Connection connection) {
-        this.connection = connection;
-    }
-
-    // 1. 나의 즐겨찾기 작가 조회 메서드
+        // 1. 나의 즐겨찾기 작가 조회 메서드
     public List<Photographer> getMyFavPhotographers(int userId) throws SQLException {
         String sql = "select p.photographer_id, p.studio_id, p.name, p.phone, p.years, count(*) AS cnt " +
                      "from Photographer p JOIN Reservation r ON p.photographer_id = r.photographer_id " +
@@ -59,4 +102,5 @@ public class PhotographerDAO {
             return ranks;
         }
     }
+
 }

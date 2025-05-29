@@ -1,14 +1,38 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import dto.Studio;
 import dto.StudioStatistics;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class StudioDAO {
+	private Connection conn;
+	
+	public StudioDAO(Connection conn) {
+		this.conn = conn;
+	}
+	
+	public List<Studio> getAllStudios() throws SQLException {
+		List<Studio> studios = new ArrayList<>();
+		String sql = "select * from Studio";
+		
+		try (PreparedStatement pstmt = conn.prepareStatement(sql);
+			 ResultSet rs = pstmt.executeQuery()) {
+			while (rs.next()) {
+				Studio studio = new Studio(
+					rs.getInt("studio_id"),
+					rs.getString("studio_name"),
+			        rs.getString("location")				
+				);
+				studios.add(studio);
+			}
+		}
+				
+		return studios;	
+	}
+
     public List<StudioStatistics> getStudioSummary(Connection conn) throws SQLException {
         String sql = "SELECT studio_id, COUNT(*) AS total_reservations " +
                 "FROM Reservation GROUP BY ROLLUP(studio_id)";
@@ -23,4 +47,5 @@ public class StudioDAO {
             return stats;
         }
     }
+
 }
