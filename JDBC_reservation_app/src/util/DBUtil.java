@@ -5,15 +5,27 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBUtil {
-    public static Connection getConnection() throws SQLException {
-        String userID = "testuser";
-        String userPW = "testpw";
-        String dbName = "photodb";
-        String header = "jdbc:mysql://localhost:3306/";
-        String encoding = "useUnicode=true&characterEncoding=UTF-8";
-        String url = header + dbName + "?" + encoding;
+    private static final String URL = "jdbc:mysql://localhost:3306/photo_db?serverTimezone=Asia/Seoul";
+    private static final String USER = "root";
+    private static final String PASSWORD = "19900221"; // 실제 비밀번호로 바꿔줘
 
-        return DriverManager.getConnection(url, userID, userPW);
+    public static Connection getConnection() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // ✅ 드라이버 명시적으로 로드
+        } catch (ClassNotFoundException e) {
+            System.err.println("MySQL JDBC 드라이버를 찾을 수 없습니다.");
+            e.printStackTrace();
+        }
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
+    public static void closeConnection(Connection conn) {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

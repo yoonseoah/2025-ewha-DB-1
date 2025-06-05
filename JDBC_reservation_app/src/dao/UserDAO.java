@@ -2,7 +2,10 @@ package dao;
 
 import dto.User;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UserDAO {
 
@@ -16,7 +19,7 @@ public class UserDAO {
     public boolean register(User user) {
         String sql = "INSERT INTO User (user_name, phone, email) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, user.getUserName());
+            pstmt.setString(1, user.getName());
             pstmt.setString(2, user.getPhone());
             pstmt.setString(3, user.getEmail());
             return pstmt.executeUpdate() == 1;
@@ -40,7 +43,22 @@ public class UserDAO {
         }
     }
 
-    // 로그아웃
+    // 유저 ID 반환 (로그인 후용)
+    public int getUserIdByPhone(String phone) {
+        String sql = "SELECT user_id FROM User WHERE phone = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, phone);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("user_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    // 로그아웃 (DB 처리 없음)
     public void logout() {
         System.out.println("로그아웃 메소드 실행됨 (DB 연결 없음)");
     }
