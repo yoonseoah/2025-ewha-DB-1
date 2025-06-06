@@ -48,7 +48,7 @@ public class Main {
                         System.out.print("이메일: ");
                         String email = scanner.nextLine();
                         if (userDAO.login(phone, email)) {
-                            loggedInUserId = userDAO.getUserIdByPhone(phone); // getUserIdByPhone 메서드 필요
+                            loggedInUserId = userDAO.getUserIdByPhone(phone);
                             isLoggedIn = true;
                             System.out.println("로그인 성공!");
                         } else {
@@ -94,9 +94,9 @@ public class Main {
                         int photographerId = Integer.parseInt(scanner.nextLine());
                         System.out.print("배경 ID: ");
                         int backgroundId = Integer.parseInt(scanner.nextLine());
-                        System.out.print("시작 시간 (YYYY-MM-DD HH:MM): ");
+                        System.out.print("시작 시간 (YYYY-MM-DD HH:MM:SS): ");
                         String start = scanner.nextLine();
-                        System.out.print("종료 시간 (YYYY-MM-DD HH:MM): ");
+                        System.out.print("종료 시간 (YYYY-MM-DD HH:MM:SS): ");
                         String end = scanner.nextLine();
                         Reservation res = new Reservation(0, loggedInUserId, studioId, photographerId, backgroundId, start, end);
                         if (reservationDAO.insertReservation(res)) System.out.println("예약 성공! ID: " + res.getReservationId());
