@@ -42,7 +42,7 @@ public class ReservationDAO {
     // 사용자 ID로 예약 전체 조회
     public List<Reservation> getReservationsByUser(int userId) {
         List<Reservation> list = new ArrayList<>();
-        String sql = "SELECT * FROM reservation WHERE user_id = ?";
+        String sql = "SELECT * FROM View_Reservation_Info WHERE user_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
             try (ResultSet rs = pstmt.executeQuery()) {
