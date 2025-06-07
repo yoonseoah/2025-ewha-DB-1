@@ -60,7 +60,7 @@ public class PhotographerDAO {
 	                     "where r.user_id = ? " +
 	                     "group by p.photographer_id, p.studio_id, p.name, p.phone, p.years " +
 	                     "having count(*) >= 3";
-	        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+	        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 	            pstmt.setInt(1, userId);
 	            try (ResultSet rs = pstmt.executeQuery()) {
 	                List<Photographer> favorites = new ArrayList<>();
