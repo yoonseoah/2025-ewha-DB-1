@@ -70,7 +70,8 @@ public class PhotographerDAO {
 	                        rs.getInt("studio_id"),
 	                        rs.getString("name"),
 	                        rs.getString("phone"),
-	                        rs.getInt("years")
+	                        rs.getInt("years"),
+							rs.getInt("cnt")
 	                    );
 	                    favorites.add(photographer);
 	                }
