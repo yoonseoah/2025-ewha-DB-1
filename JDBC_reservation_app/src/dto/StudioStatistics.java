@@ -23,6 +23,6 @@ public class StudioStatistics {
 
     @Override
     public String toString() {
-        return "순위: " + rank + ", 작가명: " + name + ", 예약수: " + reservationCount;
+        return "스튜디오 ID: " + studioId + ", 예약 수: " + totalReservations;
     }
 }
