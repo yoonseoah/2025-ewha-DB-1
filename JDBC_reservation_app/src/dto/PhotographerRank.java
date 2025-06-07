@@ -37,4 +37,9 @@ public class PhotographerRank {
     public void setRank(int rank) {
         this.rank = rank;
     }
+
+    @Override
+    public String toString() {
+        return "순위: " + rank + ", 작가명: " + name + ", 예약수: " + reservationCount;
+    }
 }
