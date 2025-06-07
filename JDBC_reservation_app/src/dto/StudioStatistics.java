@@ -20,4 +20,9 @@ public class StudioStatistics {
     public void setTotalReservations(int totalReservations) {
         this.totalReservations = totalReservations;
     }
+
+    @Override
+    public String toString() {
+        return "순위: " + rank + ", 작가명: " + name + ", 예약수: " + reservationCount;
+    }
 }
