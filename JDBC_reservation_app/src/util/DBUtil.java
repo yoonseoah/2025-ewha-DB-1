@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DBUtil {
     private static final String URL = "jdbc:mysql://localhost:3306/photo_db?serverTimezone=Asia/Seoul";
-    private static final String USER = "root";
-    private static final String PASSWORD = "19900221"; // 실제 비밀번호로 바꿔줘
+    private static final String USER = "testuser";
+    private static final String PASSWORD = "testpw"; 
 
     public static Connection getConnection() throws SQLException {
         try {
