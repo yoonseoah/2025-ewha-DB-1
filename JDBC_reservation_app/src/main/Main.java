@@ -80,13 +80,31 @@ public class Main {
                     String choice = scanner.nextLine();
 
                     if (choice.equals("1")) {
-                        studioDAO.getAllStudios().forEach(System.out::println);
+                        List<Studio> studios = studioDAO.getAllStudios();
+                        System.out.println("===== 전체 사진관 목록 =====");
+                        for (Studio s : studios) {
+                            System.out.println(s.getStudioId() + " | " + s.getStudioName() + " | " + s.getLocation());
+                        }
                     } else if (choice.equals("2")) {
-                        System.out.print("사진관 ID 입력: ");
-                        int studioId = Integer.parseInt(scanner.nextLine());
-                        photographerDAO.getPhotographersByStudio(studioId).forEach(System.out::println);
+                        System.out.print("\n조회할 사진관 ID를 입력하세요: ");
+                        int studioId = scanner.nextInt();
+                        scanner.nextLine();
+                        List<Photographer> photographers = photographerDAO.getPhotographersByStudio(studioId);
+
+                        if (photographers.isEmpty()) {
+                            System.out.println("해당 사진관에 소속된 작가가 없습니다.");
+                        } else {
+                            System.out.println("===== 작가 목록 =====");
+                            for (Photographer p : photographers) {
+                                System.out.println("이름: " + p.getName() + ", 연차: " + p.getYears() + ", 예약 수: " + p.getReservationCount());
+                            }
+                        }
                     } else if (choice.equals("3")) {
-                        backgroundDAO.getAllBackgrounds().forEach(System.out::println);
+                        List<Background> backgrounds = backgroundDAO.getAllBackgrounds();
+                        System.out.println("\n===== 예약 가능 배경 색상 목록 =====");
+                        for (Background bg : backgrounds) {
+                            System.out.println("ID: " + bg.getBackgroundId() + ", 색상: " + bg.getColorName());
+                        }
                     } else if (choice.equals("4")) {
                         System.out.print("스튜디오 ID: ");
                         int studioId = Integer.parseInt(scanner.nextLine());
@@ -99,35 +117,76 @@ public class Main {
                         System.out.print("종료 시간 (YYYY-MM-DD HH:MM:SS): ");
                         String end = scanner.nextLine();
                         Reservation res = new Reservation(0, loggedInUserId, studioId, photographerId, backgroundId, start, end);
-                        if (reservationDAO.insertReservation(res)) System.out.println("예약 성공! ID: " + res.getReservationId());
+                        if (reservationDAO.insertReservation(res))
+                            System.out.println("예약 성공! ID: " + res.getReservationId());
                         else System.out.println("예약 실패");
+
                     } else if (choice.equals("5")) {
-                        reservationDAO.getReservationsByUser(loggedInUserId).forEach(System.out::println);
+                        System.out.println("\n[나의 예약 조회]");
+                        System.out.print("사용자 ID: ");
+                        int userId = Integer.parseInt(scanner.nextLine());
+                        List<Reservation> list = reservationDAO.getReservationsByUser(userId);  // 타입 맞게 받고
+
+                        for (Reservation r : list) {
+                            System.out.println("- 예약 ID: " + r.getReservationId());
+                            System.out.println("  스튜디오 ID: " + r.getStudioId());
+                            System.out.println("  사진작가 ID: " + r.getPhotographerId());
+                            System.out.println("  배경 ID: " + r.getBackgroundId());
+                            System.out.println("  시간: " + r.getStartTime() + " ~ " + r.getEndTime());
+                            System.out.println();
+                        }
+
                     } else if (choice.equals("6")) {
+                        System.out.println("\n[예약 수정]");
                         System.out.print("수정할 예약 ID: ");
-                        int id = Integer.parseInt(scanner.nextLine());
-                        Reservation res = reservationDAO.findById(id);
-                        if (res == null) continue;
-                        System.out.print("새 스튜디오 ID (Enter 생략): ");
-                        String sid = scanner.nextLine();
-                        if (!sid.trim().equals("")) res.setStudioId(Integer.parseInt(sid));
+                        int reservationId = Integer.parseInt(scanner.nextLine());
+
+                        Reservation origin = reservationDAO.findById(reservationId);
+                        if (origin == null) {
+                            System.out.println("해당 예약을 찾을 수 없습니다.");
+                            break;
+                        }
+
+                        System.out.print("새 스튜디오 ID: ");
+                        String studioIdInput = scanner.nextLine();
+                        if (!studioIdInput.isBlank()) {
+                            origin.setStudioId(Integer.parseInt(studioIdInput));
+                        }
                         System.out.print("새 사진작가 ID: ");
-                        String pid = scanner.nextLine();
-                        if (!pid.trim().equals("")) res.setPhotographerId(Integer.parseInt(pid));
+                        String photographerIdInput = scanner.nextLine();
+                        if (!photographerIdInput.isBlank()) {
+                            origin.setPhotographerId(Integer.parseInt(photographerIdInput));
+                        }
                         System.out.print("새 배경 ID: ");
-                        String bid = scanner.nextLine();
-                        if (!bid.trim().equals("")) res.setBackgroundId(Integer.parseInt(bid));
-                        System.out.print("새 시작 시간: ");
-                        String start = scanner.nextLine();
-                        if (!start.trim().equals("")) res.setStartTime(start);
-                        System.out.print("새 종료 시간: ");
-                        String end = scanner.nextLine();
-                        if (!end.trim().equals("")) res.setEndTime(end);
-                        System.out.println(reservationDAO.updateReservation(res) ? "예약 수정 완료" : "수정 실패");
+                        String backgroundIdInput = scanner.nextLine();
+                        if (!backgroundIdInput.isBlank()) {
+                            origin.setBackgroundId(Integer.parseInt(backgroundIdInput));
+                        }
+                        System.out.print("새 시작 시간 (YYYY-MM-DD HH:MM): ");
+                        String startTime = scanner.nextLine();
+                        if (!startTime.isBlank()) {
+                            origin.setStartTime(startTime);
+                        }
+                        System.out.print("새 종료 시간 (YYYY-MM-DD HH:MM): ");
+                        String endTime = scanner.nextLine();
+                        if (!endTime.isBlank()) {
+                            origin.setEndTime(endTime);
+                        }
+
+                        boolean updated = reservationDAO.updateReservation(origin);
+                        if (updated) {
+                            System.out.println("예약이 수정되었습니다.");
+                        } else {
+                            System.out.println("예약 수정 실패");
+                        }
+
+
                     } else if (choice.equals("7")) {
+                        System.out.println("\n[예약 취소]");
                         System.out.print("취소할 예약 ID: ");
                         int rid = Integer.parseInt(scanner.nextLine());
                         System.out.println(reservationDAO.deleteReservation(rid) ? "취소 완료" : "취소 실패");
+
                     } else if (choice.equals("8")) {
                         rentalDAO.getAllRentals().forEach(System.out::println);
                         System.out.print("대여할 아이템 ID들 (쉼표 구분): ");
