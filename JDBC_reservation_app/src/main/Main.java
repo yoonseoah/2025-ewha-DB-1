@@ -188,21 +188,58 @@ public class Main {
                         System.out.println(reservationDAO.deleteReservation(rid) ? "취소 완료" : "취소 실패");
 
                     } else if (choice.equals("8")) {
-                        rentalDAO.getAllRentals().forEach(System.out::println);
-                        System.out.print("대여할 아이템 ID들 (쉼표 구분): ");
-                        String[] ids = scanner.nextLine().split(",");
-                        List<Integer> itemIds = new ArrayList<>();
-                        for (String s : ids) itemIds.add(Integer.parseInt(s.trim()));
-                        System.out.print("예약 ID 입력: ");
-                        int rid = Integer.parseInt(scanner.nextLine());
-                        itemIds.forEach(item -> rrDAO.addReservationRental(rid, item));
-                        System.out.println("아이템 연결 완료");
+                        // 4. 대여 가능한 아이템 목록 조회
+                        rentalDAO = new RentalDAO(conn);
+                        List<Rental> rentals = rentalDAO.getAllRentals();
+
+                        System.out.println("\n===== 대여 가능한 아이템 목록 =====");
+                        for (Rental r : rentals) {
+                            System.out.println("ID: " + r.getItemId() + ", 이름: " + r.getItemName() + ", 타입: " + r.getItemType());
+                        }
+
+// 5. 사용자로부터 대여할 아이템 선택 받기
+                        System.out.print("\n대여할 아이템 ID를 쉼표(,)로 구분해서 입력하세요 (예: 1,3,5): ");
+                        scanner.nextLine(); // 이전 nextInt() 후 개행 소비
+                        String[] selectedIds = scanner.nextLine().split(",");
+                        List<Integer> selectedItemIds = new ArrayList<>();
+                        for (String id : selectedIds) {
+                            selectedItemIds.add(Integer.parseInt(id.trim()));
+                        }
+
+                        System.out.print("예약 ID를 입력하세요: ");
+                        int reservationId = scanner.nextInt();
+
+                        rrDAO = new ReservationRentalDAO(conn);
+                        for (int itemId : selectedItemIds) {
+                            rrDAO.addReservationRental(reservationId, itemId);
+                        }
+                        System.out.println("대여 아이템이 예약에 성공적으로 추가되었습니다.");
+
+
+
+
                     } else if (choice.equals("9")) {
-                        photographerDAO.getMyFavPhotographers(loggedInUserId).forEach(System.out::println);
+                        int userId = 1; // 테스트할 사용자 ID
+                        List<Photographer> favoritePhotographers = photographerDAO.getMyFavPhotographers(userId);
+                        System.out.println("즐겨찾기 작가들:");
+                        for (Photographer p : favoritePhotographers) {
+                            System.out.println("이름: " + p.getName());
+                        }
+
                     } else if (choice.equals("10")) {
-                        photographerDAO.getPhotographerRanks().forEach(System.out::println);
+                        List<PhotographerRank> ranks = photographerDAO.getPhotographerRanks();
+                        System.out.println("인기 사진작가 순위:");
+                        for (PhotographerRank rank : ranks) {
+                            System.out.println("이름: " + rank.getName() + ", 예약 수: " + rank.getReservationCount() + ", 순위: " + rank.getRank());
+                        }
+
                     } else if (choice.equals("11")) {
-                        studioDAO.getStudioSummary(conn).forEach(System.out::println);
+                        List<StudioStatistics> stats = studioDAO.getStudioSummary(conn);
+                        for (StudioStatistics stat : stats) {
+                            System.out.println("스튜디오 ID: " + stat.getStudioId()
+                                    + ", 예약 수: " + stat.getTotalReservations());
+                        }
+
                     } else if (choice.equals("12")) {
                         isLoggedIn = false;
                         loggedInUserId = -1;
