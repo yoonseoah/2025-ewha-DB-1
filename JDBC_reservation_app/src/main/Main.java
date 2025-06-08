@@ -219,13 +219,26 @@ public class Main {
 
 
                     } else if (choice.equals("9")) {
-                        photographerDAO.getMyFavPhotographers(loggedInUserId).forEach(System.out::println);
+                        int userId = 1; // 테스트할 사용자 ID
+                        List<Photographer> favoritePhotographers = photographerDAO.getMyFavPhotographers(userId);
+                        System.out.println("즐겨찾기 작가들:");
+                        for (Photographer p : favoritePhotographers) {
+                            System.out.println("이름: " + p.getName());
+                        }
 
                     } else if (choice.equals("10")) {
-                        photographerDAO.getPhotographerRanks().forEach(System.out::println);
+                        List<PhotographerRank> ranks = photographerDAO.getPhotographerRanks();
+                        System.out.println("인기 사진작가 순위:");
+                        for (PhotographerRank rank : ranks) {
+                            System.out.println("이름: " + rank.getName() + ", 예약 수: " + rank.getReservationCount() + ", 순위: " + rank.getRank());
+                        }
 
                     } else if (choice.equals("11")) {
-                        studioDAO.getStudioSummary(conn).forEach(System.out::println);
+                        List<StudioStatistics> stats = studioDAO.getStudioSummary(conn);
+                        for (StudioStatistics stat : stats) {
+                            System.out.println("스튜디오 ID: " + stat.getStudioId()
+                                    + ", 예약 수: " + stat.getTotalReservations());
+                        }
 
                     } else if (choice.equals("12")) {
                         isLoggedIn = false;
