@@ -215,12 +215,18 @@ public class Main {
                         }
                         System.out.println("대여 아이템이 예약에 성공적으로 추가되었습니다.");
 
+
+
+
                     } else if (choice.equals("9")) {
                         photographerDAO.getMyFavPhotographers(loggedInUserId).forEach(System.out::println);
+
                     } else if (choice.equals("10")) {
                         photographerDAO.getPhotographerRanks().forEach(System.out::println);
+
                     } else if (choice.equals("11")) {
                         studioDAO.getStudioSummary(conn).forEach(System.out::println);
+
                     } else if (choice.equals("12")) {
                         isLoggedIn = false;
                         loggedInUserId = -1;
