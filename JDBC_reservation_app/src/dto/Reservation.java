@@ -1,7 +1,7 @@
 package dto;
 
 public class Reservation {
-	private int reservationId;
+    private int reservationId;
     private int userId;
     private int studioId;
     private int photographerId;
@@ -40,5 +40,9 @@ public class Reservation {
     public String getEndTime() { return endTime; }
     public void setEndTime(String endTime) { this.endTime = endTime; }
 
-
+    @Override
+    public String toString() {
+        return "예약 ID: " + reservationId + ", 사진관 ID: " + studioId + ", 작가 ID: " + photographerId +
+                ", 배경 ID: " + backgroundId + ", 시작: " + startTime + ", 종료: " + endTime;
+    }
 }
